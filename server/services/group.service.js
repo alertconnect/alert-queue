@@ -4,6 +4,14 @@ const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
 
 /**
+ * Find all groups
+ * @returns {Promise<void>}
+ */
+const getGroups = async () => {
+  return mongoose.model('Chat').find({});
+}
+
+/**
  * Find a group by chatId
  * @param {Number} chatId
  * @returns {Promise<void>}
@@ -39,6 +47,7 @@ const updateGroup = async (chatId, content) => {
 };
 
 module.exports = {
+  getGroups,
   getGroupByChatId,
   updateGroup,
 };
