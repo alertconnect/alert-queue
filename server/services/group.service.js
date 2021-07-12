@@ -46,8 +46,22 @@ const updateGroup = async (chatId, content) => {
   });
 };
 
+/**
+ * Delete a chat group
+ * @param {Number} chatId
+ * @returns {Promise<void>}
+ */
+const deleteGroupData = async (chatId) => {
+  const group = await getGroupByChatId(chatId);
+  if (!group) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
+  }
+  await mongoose.model('Chat').deleteOne({ chatId });
+};
+
 module.exports = {
   getGroups,
   getGroupByChatId,
   updateGroup,
+  deleteGroupData,
 };

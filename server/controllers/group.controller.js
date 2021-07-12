@@ -18,8 +18,14 @@ const updateGroupData = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const deleteGroup = catchAsync(async (req, res) => {
+  const result = await groupService.deleteGroupData(req.params.chatId);
+  res.send(result);
+});
+
 module.exports = {
   getGroups,
   getGroupData,
-  updateGroupData
+  updateGroupData,
+  deleteGroup
 }
