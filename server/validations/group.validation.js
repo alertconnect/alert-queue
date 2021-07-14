@@ -16,8 +16,10 @@ const updateGroupData = {
       title: Joi.string(),
       type: Joi.string(),
       geo: Joi.string(),
-      geoName: Joi.string(),
-      lastAlert: Joi.date(),
+      lastAlert: {
+        date: Joi.date(),
+        identifier: Joi.string()
+      },
     })
     .min(1),
 };

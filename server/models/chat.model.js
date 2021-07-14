@@ -10,8 +10,10 @@ const ChatSchema = new Schema({
   title: String,
   type: String,
   geo: { type: String, required: true},
-  geoName: { type: String, default: ''},
-  lastAlert: { type: Date, default: Date.now },
+  lastAlert: {
+    date : { type: Date, default: Date.now() },
+    identifier: String
+  },
 });
 
 /**

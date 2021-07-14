@@ -31,11 +31,6 @@ const getGroupByChatId = async (chatId) => {
  * @returns {Promise<void>}
  */
 const updateGroup = async (chatId, content) => {
-  const group = await getGroupByChatId(chatId);
-  if (!group) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
-  }
-
   await mongoose.model('Chat').updateOne(
     { chatId },
     content,

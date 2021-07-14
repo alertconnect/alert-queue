@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
  */
 
 const SectorSchema = new Schema({
-  geo: { type: String, required: true},
+  geo: { type: String, required: true, unique: true},
   description: String
 });
 
