@@ -1,17 +1,13 @@
-FROM node:12.18.2-alpine3.12
+FROM node:16-alpine
 
-WORKDIR /api
+WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
-COPY .npmrc .
+COPY package.json yarn.lock ./
 
-ARG GITHUB_PKG_TOKEN
-RUN echo "//npm.pkg.github.com/:_authToken=\${GITHUB_PKG_TOKEN}" >> .npmrc && \
-    yarn --frozen-lockfile
+RUN yarn --frozen-lockfile
 
 COPY . .
 
 EXPOSE 8080
 
-CMD ["yarn", "start"]
+CMD [ "yarn", "start:docker" ]
