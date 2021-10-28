@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require("../models/chat.model");
+require('../models/chat.model');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
 
@@ -9,7 +9,7 @@ const httpStatus = require('http-status');
  */
 const getGroups = async () => {
   return mongoose.model('Chat').find({});
-}
+};
 
 /**
  * Find a group by chatId
@@ -17,12 +17,10 @@ const getGroups = async () => {
  * @returns {Promise<void>}
  */
 const getGroupByChatId = async (chatId) => {
-  return mongoose.model('Chat').findOne(
-    {
-      chatId
-    }
-  );
-}
+  return mongoose.model('Chat').findOne({
+    chatId,
+  });
+};
 
 /**
  * Update or create a chat group
@@ -31,13 +29,10 @@ const getGroupByChatId = async (chatId) => {
  * @returns {Promise<void>}
  */
 const updateGroup = async (chatId, content) => {
-  await mongoose.model('Chat').updateOne(
-    { chatId },
-    content,
-    {
+  await mongoose.model('Chat').updateOne({ chatId }, content, {
     upsert: true,
     new: true,
-    setDefaultsOnInsert: true
+    setDefaultsOnInsert: true,
   });
 };
 

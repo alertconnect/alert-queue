@@ -7,10 +7,8 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(validate(alertValidation.query), alertController.getGeoActiveAlert)
+  .get(validate(alertValidation.query), alertController.getGeoActiveAlert);
 
-router
-  .route('/refresh')
-  .post(alertController.refreshAlert)
+router.route('/refresh').post(alertController.refreshAlert);
 
 module.exports = router;

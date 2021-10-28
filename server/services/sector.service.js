@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require("../models/sector.model");
+require('../models/sector.model');
 
 /**
  * Query for short urls

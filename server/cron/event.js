@@ -18,7 +18,7 @@ function downloadAlert() {
         })
         .catch((error) => {
           logger.error(`Task failed: downloadLatestZip`, {
-            error
+            error,
           });
         });
     },
@@ -43,7 +43,7 @@ function cleanExpiredEvent() {
         })
         .catch((error) => {
           logger.error(`Task failed: deleteExpiredEvent`, {
-            error
+            error,
           });
         });
     },

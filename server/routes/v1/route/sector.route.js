@@ -7,6 +7,6 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(validate(genericValidation.query), sectorController.getSectors)
+  .get(validate(genericValidation.query), sectorController.getSectors);
 
 module.exports = router;

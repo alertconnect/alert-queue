@@ -23,15 +23,16 @@ function connect() {
     });
   }
 
-  mongoose.connect(dbUrl, CONNECT_OPTIONS)
-    .then((r) => {
+  mongoose
+    .connect(dbUrl, CONNECT_OPTIONS)
+    .then(() => {
       server = app.listen(config.port, () => {
         logger.info(`Listening to port ${config.port}`);
       });
     })
     .catch((e) => {
-    console.error(e);
-  });
+      console.error(e);
+    });
 }
 
 const db = mongoose.connection;
@@ -61,7 +62,7 @@ db.on('disconnected', () => {
   setTimeout(() => connect(), config.reconnectInterval);
 });
 
-connect()
+connect();
 
 const exitHandler = () => {
   if (server) {

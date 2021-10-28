@@ -17,7 +17,7 @@ const defaultRoutes = [
   {
     path: '/sector',
     route: sectorRoute,
-  }
+  },
 ];
 
 defaultRoutes.forEach((route) => {
