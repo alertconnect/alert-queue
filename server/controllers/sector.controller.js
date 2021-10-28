@@ -3,7 +3,9 @@ const { sectorService } = require('../services');
 
 const getSectors = catchAsync(async (req, res) => {
   const result = await sectorService.querySectors();
-  res.send(result);
+  res.send({
+    result: result || [],
+  });
 });
 
 module.exports = {

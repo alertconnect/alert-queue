@@ -42,8 +42,8 @@ model Event {
 }
 
 model Sector {
-  id             Int      @id @default(autoincrement())
-  geo            String
+  id             Int       @id @default(autoincrement())
+  geo            String    @unique
   description    String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now())
