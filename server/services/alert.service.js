@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
 const dayjs = require('dayjs');
-require('../models/event.model');
+
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 /**
  * Find current active events by geo code
@@ -9,9 +10,11 @@ require('../models/event.model');
  */
 const findCurrentAlert = async (geo) => {
   const currentTime = dayjs().toISOString();
-  return mongoose.model('Event').find({
-    geo,
-    expires: { $gte: currentTime },
+  return prisma.event.findMany({
+    where: {
+      geo,
+      expires: { gte: currentTime },
+    },
   });
 };
 

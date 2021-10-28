@@ -1,11 +1,12 @@
-const mongoose = require('mongoose');
 const path = require('path');
 const dayjs = require('dayjs');
 const fs = require('fs');
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser();
-require('../models/event.model');
 const logger = require('../utils/logger');
+
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const EXTRACTION_PATH = './uploads/ext/';
 
@@ -14,7 +15,7 @@ const EXTRACTION_PATH = './uploads/ext/';
  * @returns {Promise<void>}
  */
 const cleanEvents = async () => {
-  await mongoose.model('Event').deleteMany({});
+  await prisma.event.deleteMany({});
 };
 
 /**
@@ -24,7 +25,9 @@ const cleanEvents = async () => {
 const deleteExpiredEvent = async () => {
   logger.info('Delete all expired events in progress');
   const currentTime = dayjs().toISOString();
-  await mongoose.model('Event').deleteMany({ expires: { $lte: currentTime } });
+  await prisma.event.deleteMany({
+    where: { expires: { lte: currentTime } },
+  });
 };
 
 const extension = async (element, extension = 'xml') => {
@@ -60,26 +63,27 @@ const updateEventData = async () => {
             if (infoArray) {
               for (const info of infoArray) {
                 const arealArray = info.area;
+                console.log(arealArray);
                 for (const area of arealArray) {
                   try {
-                    await mongoose.model('Event').create({
-                      geo: area.geocode[0].value.toString(),
-                      type: eventCode(info.event.toString()),
-                      description: area.areaDesc.toString() || '',
-                      event: info.event.toString(),
-                      urgency: info.urgency.toString(),
-                      severity: info.severity.toString(),
-                      certainty: info.certainty.toString(),
-                      onset: info.onset.toString(),
-                      expires: info.expires.toString(),
-                      sendedAt: alert.sent.toString(),
-                      identifier: alert.identifier.toString(),
+                    await prisma.event.create({
+                      data: {
+                        geo: area.geocode[0].value.toString(),
+                        type: eventCode(info.event.toString()),
+                        description: area.areaDesc.toString() || '',
+                        event: info.event.toString(),
+                        urgency: info.urgency.toString(),
+                        severity: info.severity.toString(),
+                        certainty: info.certainty.toString(),
+                        onset: info.onset.toString(),
+                        expires: info.expires.toString(),
+                        received: alert.sent.toString(),
+                        identifier: alert.identifier.toString(),
+                      },
                     });
                   } catch (error) {
                     logger.error(error);
-                    throw new Error(
-                      'db-core - error generated while inserting on db',
-                    );
+                    throw new Error('error generated while inserting on db');
                   }
                 }
               }

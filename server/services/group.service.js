@@ -1,14 +1,15 @@
-const mongoose = require('mongoose');
-require('../models/chat.model');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
+
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 /**
  * Find all groups
  * @returns {Promise<void>}
  */
 const getGroups = async () => {
-  return mongoose.model('Chat').find({});
+  return await prisma.chat.find({});
 };
 
 /**
@@ -17,7 +18,7 @@ const getGroups = async () => {
  * @returns {Promise<void>}
  */
 const getGroupByChatId = async (chatId) => {
-  return mongoose.model('Chat').findOne({
+  return await prisma.chat.findOne({
     chatId,
   });
 };
@@ -29,7 +30,7 @@ const getGroupByChatId = async (chatId) => {
  * @returns {Promise<void>}
  */
 const updateGroup = async (chatId, content) => {
-  await mongoose.model('Chat').updateOne({ chatId }, content, {
+  await prisma.chat.updateOne({ chatId }, content, {
     upsert: true,
     new: true,
     setDefaultsOnInsert: true,
@@ -46,7 +47,7 @@ const deleteGroupData = async (chatId) => {
   if (!group) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
   }
-  await mongoose.model('Chat').deleteOne({ chatId });
+  await prisma.chat.deleteOne({ chatId });
 };
 
 module.exports = {
