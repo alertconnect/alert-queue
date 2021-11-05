@@ -9,7 +9,9 @@ const prisma = new PrismaClient();
  * @returns {Promise<void>}
  */
 const getGroups = async () => {
-  return await prisma.chat.find({});
+  return await prisma.chat.findMany({
+    where: {},
+  });
 };
 
 /**
@@ -18,8 +20,10 @@ const getGroups = async () => {
  * @returns {Promise<void>}
  */
 const getGroupByChatId = async (chatId) => {
-  return await prisma.chat.findOne({
-    chatId,
+  return await prisma.chat.findUnique({
+    where: {
+      chatId,
+    },
   });
 };
 
@@ -30,7 +34,7 @@ const getGroupByChatId = async (chatId) => {
  * @returns {Promise<void>}
  */
 const updateGroup = async (chatId, content) => {
-  await prisma.chat.updateOne({ chatId }, content, {
+  await prisma.chat.update({ chatId }, content, {
     upsert: true,
     new: true,
     setDefaultsOnInsert: true,
@@ -47,7 +51,7 @@ const deleteGroupData = async (chatId) => {
   if (!group) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Group not found');
   }
-  await prisma.chat.deleteOne({ chatId });
+  await prisma.chat.delete({ chatId });
 };
 
 module.exports = {
