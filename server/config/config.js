@@ -11,14 +11,10 @@ const envVarsSchema = Joi.object()
       .valid('production', 'development', 'test')
       .required(),
     PORT: Joi.number().default(8080),
-    LOG_FILE_NAME: Joi.string().default('weather-alert-bot'),
-    MONGO_HOST: Joi.string().default('localhost').required(),
-    MONGO_PORT: Joi.number().default(27017).required(),
-    MONGO_USER: Joi.string().min(0).allow('').allow(null).optional(),
-    MONGO_PASS: Joi.string().min(0).allow('').allow(null).optional(),
-    MONGO_DB: Joi.string().default('element-dev').required(),
-    AUTH_SOURCE: Joi.string().default('element').optional(),
-    RECONNECT_INTERVAL: Joi.number().default(1000),
+    LOG_FILE_NAME: Joi.string().default('prociv-api'),
+    DATABASE_URL: Joi.string()
+      .default('postgresql://prociv:prociv@localhost:5432/prociv')
+      .required(),
   })
   .unknown();
 
@@ -34,15 +30,5 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   logFileName: envVars.LOG_FILE_NAME,
-  reconnectInterval: envVars.RECONNECT_INTERVAL,
-  user: envVars.MONGO_USER,
-  password: envVars.MONGO_PASS,
-  dbHost: envVars.MONGO_HOST,
-  dbPort: envVars.MONGO_PORT,
-  database: envVars.MONGO_DB,
-  auth: {
-    authSource: envVars.AUTH_SOURCE,
-    user: envVars.MONGO_USER,
-    password: envVars.MONGO_PASS,
-  },
+  databaseUrl: envVars.DATABASE_URL,
 };

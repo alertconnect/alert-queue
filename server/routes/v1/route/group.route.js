@@ -5,14 +5,15 @@ const groupValidation = require('../../../validations/group.validation');
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(groupController.getGroups)
+router.route('/').get(groupController.getGroups);
 
 router
   .route('/:chatId')
   .get(validate(groupValidation.getGroupData), groupController.getGroupData)
-  .put(validate(groupValidation.updateGroupData), groupController.updateGroupData)
-  .delete(validate(groupValidation.getGroupData), groupController.deleteGroup)
+  .put(
+    validate(groupValidation.updateGroupData),
+    groupController.updateGroupData,
+  )
+  .delete(validate(groupValidation.getGroupData), groupController.deleteGroup);
 
 module.exports = router;

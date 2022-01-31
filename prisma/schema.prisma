@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Chat {
+  id             Int      @id @default(autoincrement())
+  chatId         String
+  title          String?
+  type           String?
+  geo            String
+  lastAlertId    String?
+  lastAlertDate  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  @@map(name: "chats")
+}
+
+model Event {
+  id             Int      @id @default(autoincrement())
+  geo            String
+  type           String
+  event          String
+  urgency        String
+  severity       String
+  certainty      String
+  identifier     String
+  description    String?
+  onset          DateTime  @default(now())
+  expires        DateTime  @default(now())
+  received       DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  @@map(name: "events")
+}
+
+model Sector {
+  id             Int       @id @default(autoincrement())
+  geo            String    @unique
+  description    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+  @@map(name: "sectors")
+}

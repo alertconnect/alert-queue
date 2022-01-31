@@ -1,18 +1,41 @@
-const mongoose = require('mongoose');
-require("../models/sector.model");
+const { PrismaClient } = require('@prisma/client');
+const logger = require('../utils/logger');
+const prisma = new PrismaClient();
 
 /**
- * Query for short urls
- * @param {Object} filter - Mongo filter
- * @param {Object} options - Query options
- * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
- * @param {number} [options.limit] - Maximum number of results per page (default = 10)
- * @param {number} [options.page] - Current page (default = 1)
- * @returns {Promise<QueryResult>}
+ * Query for sectors
  */
-const querySectors = async (filter, options) =>
-  await mongoose.model('Sector').find(filter, options);
+const querySectors = async () => await prisma.sector.findMany({});
+
+/**
+ * Find sector by geocode
+ */
+const findSectorByGeo = async (geocode) =>
+  await prisma.sector.findUnique({
+    where: {
+      geo: geocode,
+    },
+  });
+
+/**
+ * Create new sectors
+ */
+const createSector = async (geocode, description) => {
+  try {
+    await prisma.sector.create({
+      data: {
+        geo: geocode,
+        description,
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+    throw new Error('error generated while inserting on db');
+  }
+};
 
 module.exports = {
   querySectors,
+  findSectorByGeo,
+  createSector,
 };

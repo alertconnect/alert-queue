@@ -4,7 +4,7 @@ const { groupService } = require('../services');
 const getGroups = catchAsync(async (req, res) => {
   const result = await groupService.getGroups();
   res.send({
-      groups: result
+    groups: result,
   });
 });
 
@@ -27,5 +27,5 @@ module.exports = {
   getGroups,
   getGroupData,
   updateGroupData,
-  deleteGroup
-}
+  deleteGroup,
+};
