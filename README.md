@@ -1,10 +1,10 @@
-# Protezione Civile - Web Api
+# Protezione Civile - Alert queue manager
 [![Maintainability](https://api.codeclimate.com/v1/badges/7688e651ba6338380f13/maintainability)](https://codeclimate.com/github/prociv-sm/prociv-api/maintainability)
 [![Known Vulnerabilities](https://snyk.io/test/github/prociv-sm/prociv-api/badge.svg?targetFile=package.json)](https://snyk.io/test/github/prociv-sm/prociv-api?targetFile=package.json)
 
 ## Requirements
-*  [Node.js](https://nodejs.org/en/download/) 12.14.0 or higher
-*  [Yarn](https://yarnpkg.com/en/) 1.10.1 or higher
+*  [Node.js](https://nodejs.org/en/download) 16.x.x or higher
+*  [Yarn](https://yarnpkg.com/en) 1.10.1 or higher
 
 ## Build Setup
 

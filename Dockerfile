@@ -8,6 +8,4 @@ RUN yarn --frozen-lockfile
 
 COPY . .
 
-EXPOSE 8080
-
-CMD [ "yarn", "start:docker" ]
+CMD [ "yarn", "start" ]

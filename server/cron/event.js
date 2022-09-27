@@ -1,7 +1,5 @@
 const cron = require('node-cron');
 const downloadService = require('../services/download.service');
-const updaterService = require('../services/updater.service');
-const logger = require('../utils/logger');
 
 /**
  * Refresh event data
@@ -10,41 +8,14 @@ function downloadAlert() {
   cron.schedule(
     '*/30 * * * *',
     () => {
-      logger.debug(`Task scheduled: downloadLatestZip`);
+      console.log('downloading event data');
       downloadService
         .downloadLatestZip()
         .then(() => {
-          logger.info(`Task completed: downloadLatestZip`);
+          console.log('unzipping event data');
         })
         .catch((error) => {
-          logger.error(`Task failed: downloadLatestZip`, {
-            error,
-          });
-        });
-    },
-    {
-      scheduled: true,
-    },
-  );
-}
-
-/**
- * Refresh event data
- */
-function cleanExpiredEvent() {
-  cron.schedule(
-    '*/45 * * * *',
-    () => {
-      logger.debug(`Task scheduled: deleteExpiredEvent`);
-      updaterService
-        .deleteExpiredEvent()
-        .then(() => {
-          logger.info(`Task completed: deleteExpiredEvent`);
-        })
-        .catch((error) => {
-          logger.error(`Task failed: deleteExpiredEvent`, {
-            error,
-          });
+          console.log(error);
         });
     },
     {
@@ -55,5 +26,4 @@ function cleanExpiredEvent() {
 
 module.exports = () => {
   downloadAlert();
-  cleanExpiredEvent();
 };
