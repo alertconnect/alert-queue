@@ -1,13 +1,13 @@
 {
-  "name": "prociv-api",
-  "version": "1.2.0",
+  "name": "alert-queue",
+  "version": "1.2.1",
   "main": "server/index.js",
   "author": "Andrea Tombolato <andreacw96@gmail.com> (https://github.com/andreacw5)",
   "private": true,
   "license": "MIT",
-  "repository": "https://github.com/prociv-sm/prociv-api",
-  "bugs": "https://github.com/prociv-sm/prociv-api/issues",
-  "homepage": "https://github.com/prociv-sm/prociv-api#readme",
+  "repository": "https://github.com/prociv-sm/alert-queue",
+  "bugs": "https://github.com/prociv-sm/alert-queue/issues",
+  "homepage": "https://github.com/prociv-sm/alert-queue#readme",
   "scripts": {
     "dev": "nodemon server/index.js",
     "start": "node server/index.js"
