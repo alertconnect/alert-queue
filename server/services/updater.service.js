@@ -1,39 +1,9 @@
-const path = require('path');
-const dayjs = require('dayjs');
 const fs = require('fs');
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser();
-const logger = require('../utils/logger');
-
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 
 const EXTRACTION_PATH = './uploads/ext/';
-
-/**
- * Delete all events on db
- * @returns {Promise<void>}
- */
-const cleanEvents = async () => {
-  await prisma.event.deleteMany({});
-};
-
-/**
- * Delete all expired events
- * @returns {Promise<void>}
- */
-const deleteExpiredEvent = async () => {
-  logger.info('Delete all expired events in progress');
-  const currentTime = dayjs().toISOString();
-  await prisma.event.deleteMany({
-    where: { expires: { lte: currentTime } },
-  });
-};
-
-const extension = async (element, extension = 'xml') => {
-  const extName = path.extname(element);
-  return extName === '.' + extension;
-};
+const EXIT_PATH = './submission/';
 
 const eventCode = (event) => {
   const geo = new RegExp('\\bIDROGEOLOGICO\\b');
@@ -50,56 +20,70 @@ const eventCode = (event) => {
 };
 
 const updateEventData = async () => {
-  logger.info('updateEventData started');
-  fs.readdir(EXTRACTION_PATH, (err, list) => {
-    list.filter(extension).forEach((value) => {
-      const reg = new RegExp('^Cap', 'i');
-      if (reg.test(value)) {
-        fs.readFile(`${EXTRACTION_PATH}${value}`, 'utf8', (err, uploads) => {
-          parser.parseString(uploads, async (err, result) => {
-            await cleanEvents();
+  fs.readdir(EXTRACTION_PATH, (err, files) => {
+    files
+      .filter((file) => file.startsWith('Cap_'))
+      .forEach((file) => {
+        fs.readFile(`${EXTRACTION_PATH}${file}`, 'utf8', (err, data) => {
+          parser.parseString(data, async (err, result) => {
             const alert = result.alert;
-            const infoArray = result.alert.info;
-            if (infoArray) {
-              for (const info of infoArray) {
+            const infoAlert = result.alert.info;
+            const sectors = [];
+            const alerts = [];
+            if (infoAlert) {
+              for (const info of infoAlert) {
                 const arealArray = info.area;
-                console.log(arealArray);
                 for (const area of arealArray) {
-                  try {
-                    await prisma.event.create({
-                      data: {
-                        geo: area.geocode[0].value.toString(),
-                        type: eventCode(info.event.toString()),
-                        description: area.areaDesc.toString() || '',
-                        event: info.event.toString(),
-                        urgency: info.urgency.toString(),
-                        severity: info.severity.toString(),
-                        certainty: info.certainty.toString(),
-                        onset: info.onset.toString(),
-                        expires: info.expires.toString(),
-                        received: alert.sent.toString(),
-                        identifier: alert.identifier.toString(),
-                      },
-                    });
-                  } catch (error) {
-                    logger.error(error);
-                    throw new Error('error generated while inserting on db');
-                  }
+                  sectors.push({
+                    code: area.geocode[0].value.toString(),
+                    description: area.areaDesc.toString() || '',
+                  });
+                  alerts.push({
+                    identifier: alert.identifier.toString(),
+                    type: eventCode(info.event.toString()),
+                    event: info.event.toString(),
+                    urgency: info.urgency.toString(),
+                    severity: info.severity.toString(),
+                    certainty: info.certainty.toString(),
+                    location_code: area.geocode[0].value.toString(),
+                    location_desc: area.areaDesc.toString() || '',
+                    onset: info.onset.toString(),
+                    expires: info.expires.toString(),
+                    received: alert.sent.toString(),
+                  });
                 }
               }
-            } else {
-              logger.info('No data available, Italy is safe!');
+            }
+            if (sectors.length > 0) {
+              console.log(`Creating sectors file with ${sectors.length}`);
+              fs.writeFile(
+                `${EXIT_PATH}sectors.json`,
+                JSON.stringify(sectors),
+                (err) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                },
+              );
+            }
+            if (alerts.length > 0) {
+              console.log(`Creating alerts file with ${alerts.length}`);
+              fs.writeFile(
+                `${EXIT_PATH}alerts.json`,
+                JSON.stringify(alerts),
+                (err) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                },
+              );
             }
           });
         });
-      }
-    });
+      });
   });
-
-  logger.info('Update completed');
 };
 
 module.exports = {
   updateEventData,
-  deleteExpiredEvent,
 };
