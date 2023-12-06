@@ -1,9 +1,9 @@
 const fs = require('fs');
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser();
+const logger = require('../utils/logger');
 
 const EXTRACTION_PATH = './uploads/ext/';
-const EXIT_PATH = './submission/';
 
 const eventCode = (event) => {
   const geo = new RegExp('\\bIDROGEOLOGICO\\b');
@@ -28,17 +28,15 @@ const updateEventData = async () => {
           parser.parseString(data, async (err, result) => {
             const alert = result.alert;
             const infoAlert = result.alert.info;
-            const sectors = [];
-            const alerts = [];
             if (infoAlert) {
               for (const info of infoAlert) {
                 const arealArray = info.area;
                 for (const area of arealArray) {
-                  sectors.push({
+                  logger.info({
                     code: area.geocode[0].value.toString(),
                     description: area.areaDesc.toString() || '',
                   });
-                  alerts.push({
+                  logger.info({
                     identifier: alert.identifier.toString(),
                     type: eventCode(info.event.toString()),
                     event: info.event.toString(),
@@ -53,30 +51,6 @@ const updateEventData = async () => {
                   });
                 }
               }
-            }
-            if (sectors.length > 0) {
-              console.log(`Creating sectors file with ${sectors.length}`);
-              fs.writeFile(
-                `${EXIT_PATH}sectors.json`,
-                JSON.stringify(sectors),
-                (err) => {
-                  if (err) {
-                    console.error(err);
-                  }
-                },
-              );
-            }
-            if (alerts.length > 0) {
-              console.log(`Creating alerts file with ${alerts.length}`);
-              fs.writeFile(
-                `${EXIT_PATH}alerts.json`,
-                JSON.stringify(alerts),
-                (err) => {
-                  if (err) {
-                    console.error(err);
-                  }
-                },
-              );
             }
           });
         });

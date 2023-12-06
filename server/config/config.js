@@ -12,9 +12,7 @@ const envVarsSchema = Joi.object()
       .required(),
     PORT: Joi.number().default(8080),
     LOG_FILE_NAME: Joi.string().default('prociv-api'),
-    DATABASE_URL: Joi.string()
-      .default('postgresql://prociv:prociv@localhost:5432/prociv')
-      .required(),
+    MANAGER_API: Joi.string().required(),
   })
   .unknown();
 
@@ -30,5 +28,5 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   logFileName: envVars.LOG_FILE_NAME,
-  databaseUrl: envVars.DATABASE_URL,
+  managerApi: envVars.MANAGER_API,
 };

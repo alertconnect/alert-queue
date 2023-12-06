@@ -1,21 +1,23 @@
 const cron = require('node-cron');
 const downloadService = require('../services/download.service');
 
+const logger = require('../utils/logger');
+
 /**
  * Refresh event data
  */
 function downloadAlert() {
   cron.schedule(
-    '*/30 * * * *',
+    '*/5 * * * *',
     () => {
-      console.log('downloading event data');
+      logger.info('downloading event data');
       downloadService
         .downloadLatestZip()
         .then(() => {
-          console.log('unzipping event data');
+          logger.info('unzipping event data');
         })
         .catch((error) => {
-          console.log(error);
+          logger.info(error);
         });
     },
     {
