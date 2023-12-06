@@ -13,7 +13,8 @@ const EXTRACTION_PATH = './uploads/ext/';
 const downloadLatestZip = async () => {
   await new Promise((resolve, reject) => {
     try {
-      fs.rm(EXTRACTION_PATH, { recursive: true });
+      // eslint-disable-next-line no-sync
+      fs.rmdirSync(EXTRACTION_PATH, { recursive: true });
 
       logger.info(`${EXTRACTION_PATH} is deleted!`);
     } catch (err) {
