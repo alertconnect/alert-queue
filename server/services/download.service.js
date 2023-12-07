@@ -1,6 +1,7 @@
 const AdmZip = require('adm-zip');
 const request = require('request');
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 const updaterService = require('../services/updater.service');
 const logger = require('../utils/logger');
 
@@ -12,14 +13,7 @@ const EXTRACTION_PATH = './uploads/ext/';
 
 const downloadLatestZip = async () => {
   await new Promise((resolve, reject) => {
-    try {
-      // eslint-disable-next-line no-sync
-      fs.rmdirSync(EXTRACTION_PATH, { recursive: true });
-
-      logger.info(`${EXTRACTION_PATH} is deleted!`);
-    } catch (err) {
-      logger.error(`Error while deleting ${EXTRACTION_PATH}.`);
-    }
+    deleteDirectoryContents(EXTRACTION_PATH);
 
     request({ url: FILE_URL, encoding: null })
       .pipe(fs.createWriteStream(FILE_FS_PATH))
@@ -35,10 +29,22 @@ const downloadLatestZip = async () => {
   });
 
   const zip = new AdmZip(FILE_FS_PATH, {});
-  zip.extractAllTo(EXTRACTION_PATH, true);
+  zip.extractAllTo(EXTRACTION_PATH, true, false, '');
 
   await updaterService.updateEventData();
 };
+
+async function deleteDirectoryContents(directoryPath) {
+  try {
+    fsExtra.emptyDir(directoryPath);
+    logger.info(`Contenuto della directory ${directoryPath} eliminato`);
+  } catch (err) {
+    logger.error({
+      message: "Errore durante l'eliminazione della directory di destinazione",
+      error: err,
+    });
+  }
+}
 
 module.exports = {
   downloadLatestZip,

@@ -2,6 +2,23 @@ const fs = require('fs');
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser();
 const logger = require('../utils/logger');
+const config = require('../config/config');
+
+const Queue = require('bull');
+const REDIS_OPTIONS = {
+  port: config.redis.port,
+  host: config.redis.host,
+  username: config.redis.user,
+  password: config.redis.password,
+};
+
+const alertQueue = new Queue('alert submissions', {
+  redis: REDIS_OPTIONS,
+});
+
+const sectorQueue = new Queue('sector updater', {
+  redis: REDIS_OPTIONS,
+});
 
 const EXTRACTION_PATH = './uploads/ext/';
 
@@ -32,11 +49,19 @@ const updateEventData = async () => {
               for (const info of infoAlert) {
                 const arealArray = info.area;
                 for (const area of arealArray) {
-                  logger.info({
+                  logger.info(
+                    'New sector with code ' +
+                      area.geocode[0].value +
+                      ' received',
+                  );
+                  await sectorQueue.add({
                     code: area.geocode[0].value.toString(),
                     description: area.areaDesc.toString() || '',
                   });
-                  logger.info({
+                  logger.info(
+                    'New alert with code ' + alert.identifier + ' received',
+                  );
+                  await alertQueue.add({
                     identifier: alert.identifier.toString(),
                     type: eventCode(info.event.toString()),
                     event: info.event.toString(),
@@ -51,6 +76,8 @@ const updateEventData = async () => {
                   });
                 }
               }
+            } else {
+              logger.info('No data available, Italy is safe!');
             }
           });
         });
