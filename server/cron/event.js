@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
  */
 function downloadAlert() {
   cron.schedule(
-    '*/5 * * * *',
+    '*/30 * * * *',
     () => {
       logger.info('downloading event data');
       downloadService
