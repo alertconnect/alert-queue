@@ -11,6 +11,10 @@ const FILE_NAME = 'latest_all.zip';
 const FILE_FS_PATH = `./uploads/${FILE_NAME}`;
 const EXTRACTION_PATH = './uploads/ext/';
 
+/**
+ * @description - Download the latest zip file and extract it
+ * @returns {Promise<void>}
+ */
 const downloadLatestZip = async () => {
   await new Promise((resolve, reject) => {
     deleteDirectoryContents(EXTRACTION_PATH);
@@ -34,6 +38,11 @@ const downloadLatestZip = async () => {
   await updaterService.updateEventData();
 };
 
+/**
+ * @description - Delete all files and directories in a given directory
+ * @param {String} directoryPath
+ * @returns {Promise<void>}
+ */
 async function deleteDirectoryContents(directoryPath) {
   try {
     fsExtra.emptyDir(directoryPath);
