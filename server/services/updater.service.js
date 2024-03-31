@@ -12,11 +12,7 @@ const REDIS_OPTIONS = {
   password: config.redis.password,
 };
 
-const alertQueue = new Queue('alert submissions', {
-  redis: REDIS_OPTIONS,
-});
-
-const sectorQueue = new Queue('sector updater', {
+const alertQueue = new Queue('alerts', {
   redis: REDIS_OPTIONS,
 });
 
@@ -50,16 +46,9 @@ const updateEventData = async () => {
                 const arealArray = info.area;
                 for (const area of arealArray) {
                   logger.info(
-                    'New sector with code ' +
-                      area.geocode[0].value +
-                      ' received',
-                  );
-                  await sectorQueue.add({
-                    code: area.geocode[0].value.toString(),
-                    description: area.areaDesc.toString() || '',
-                  });
-                  logger.info(
-                    'New alert with code ' + alert.identifier + ' received',
+                    'New alert for code ' +
+                      alert.identifier +
+                      ' sending to queue',
                   );
                   await alertQueue.add({
                     identifier: alert.identifier.toString(),
