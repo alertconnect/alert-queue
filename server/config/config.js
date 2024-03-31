@@ -12,9 +12,13 @@ const envVarsSchema = Joi.object()
       .required(),
     PORT: Joi.number().default(8080),
     LOG_FILE_NAME: Joi.string().default('prociv-api'),
-    DATABASE_URL: Joi.string()
-      .default('postgresql://prociv:prociv@localhost:5432/prociv')
-      .required(),
+    REDIS_HOST: Joi.string().required().description('Redis host url'),
+    REDIS_PORT: Joi.number().default(6379).description('Redis port'),
+    REDIS_USER: Joi.string().description('Redis user'),
+    REDIS_PASSWORD: Joi.string().description('Redis password'),
+    UPTIME_URL: Joi.string().description('Uptime API URL'),
+    UPTIME_KEY: Joi.string().description('Uptime API key'),
+    UPTIME_CONNECT_TOKEN: Joi.string().description('Uptime API connect token'),
   })
   .unknown();
 
@@ -30,5 +34,15 @@ module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   logFileName: envVars.LOG_FILE_NAME,
-  databaseUrl: envVars.DATABASE_URL,
+  redis: {
+    host: envVars.REDIS_HOST,
+    port: envVars.REDIS_PORT,
+    user: envVars.REDIS_USER,
+    password: envVars.REDIS_PASSWORD,
+  },
+  uptime: {
+    api: envVars.UPTIME_URL,
+    key: envVars.UPTIME_KEY,
+    alertToken: envVars.UPTIME_CONNECT_TOKEN,
+  },
 };
