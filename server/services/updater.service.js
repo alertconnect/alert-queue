@@ -7,6 +7,7 @@ const config = require('../config/config');
 const Queue = require('bull');
 const Alert = require('../utils/classes/Alert');
 const { pingHeartbeats } = require('./uptime.service');
+const Sector = require('../utils/classes/Sector');
 const REDIS_OPTIONS = {
   port: config.redis.port,
   host: config.redis.host,
@@ -15,6 +16,10 @@ const REDIS_OPTIONS = {
 };
 
 const alertQueue = new Queue('alerts', {
+  redis: REDIS_OPTIONS,
+});
+
+const sectorsQueue = new Queue('sectors', {
   redis: REDIS_OPTIONS,
 });
 
@@ -37,6 +42,8 @@ const updateEventData = async () => {
             if (infoAlert) {
               for (const info of infoAlert) {
                 const arealArray = info.area;
+                const sector = new Sector(info);
+                await sectorsQueue.add(sector);
                 for (const area of arealArray) {
                   const AlertObj = new Alert(alert, info);
                   logger.info(
