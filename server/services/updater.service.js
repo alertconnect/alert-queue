@@ -43,7 +43,14 @@ const updateEventData = async () => {
               for (const info of infoAlert) {
                 const arealArray = info.area;
                 const sector = new Sector(info);
-                await sectorsQueue.add(sector);
+                logger.info(
+                  'New incoming sector with code ' +
+                    sector.code +
+                    ', adding to queue',
+                );
+                await sectorsQueue.add(sector).catch((error) => {
+                  logger.error('Error adding sector job to queue: ' + error);
+                });
                 for (const area of arealArray) {
                   const AlertObj = new Alert(alert, info);
                   logger.info(
@@ -51,9 +58,11 @@ const updateEventData = async () => {
                       AlertObj.location_code +
                       ' with type ' +
                       AlertObj.type +
-                      ' sending to queue',
+                      ' adding to queue',
                   );
-                  await alertQueue.add(AlertObj);
+                  await alertQueue.add(AlertObj).catch((error) => {
+                    logger.error('Error adding alerts job to queue: ' + error);
+                  });
                 }
               }
             } else {
