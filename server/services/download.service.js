@@ -29,7 +29,7 @@ const downloadLatestZip = async () => {
         reject(error);
       });
   }).catch((error) => {
-    logger.error(`Something happened: ${error}`);
+    logger.error('Error downloading the file', error);
   });
 
   const zip = new AdmZip(FILE_FS_PATH, {});
@@ -46,10 +46,10 @@ const downloadLatestZip = async () => {
 async function deleteDirectoryContents(directoryPath) {
   try {
     fsExtra.emptyDir(directoryPath);
-    logger.info(`Contenuto della directory ${directoryPath} eliminato`);
+    logger.info(`Directory ${directoryPath} has been emptied`);
   } catch (err) {
     logger.error({
-      message: "Errore durante l'eliminazione della directory di destinazione",
+      message: `Error emptying directory ${directoryPath}`,
       error: err,
     });
   }
