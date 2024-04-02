@@ -25,7 +25,7 @@ class uptimeService {
       });
     } catch (e) {
       logger.error(`Pinging uptime heartbeats with token: ${token} failed`);
-      logger.error('Ping to heartbeat failed!', e);
+      logger.error(e);
     }
   }
 }
