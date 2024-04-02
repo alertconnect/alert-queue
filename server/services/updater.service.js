@@ -7,6 +7,7 @@ const config = require('../config/config');
 const Queue = require('bull');
 const Alert = require('../utils/classes/Alert');
 const { pingHeartbeats } = require('./uptime.service');
+const Sector = require('../utils/classes/Sector');
 const REDIS_OPTIONS = {
   port: config.redis.port,
   host: config.redis.host,
@@ -15,6 +16,10 @@ const REDIS_OPTIONS = {
 };
 
 const alertQueue = new Queue('alerts', {
+  redis: REDIS_OPTIONS,
+});
+
+const sectorsQueue = new Queue('sectors', {
   redis: REDIS_OPTIONS,
 });
 
@@ -37,6 +42,15 @@ const updateEventData = async () => {
             if (infoAlert) {
               for (const info of infoAlert) {
                 const arealArray = info.area;
+                const sector = new Sector(info);
+                logger.info(
+                  'New incoming sector with code ' +
+                    sector.code +
+                    ', adding to queue',
+                );
+                await sectorsQueue.add(sector).catch((error) => {
+                  logger.error('Error adding sector job to queue: ' + error);
+                });
                 for (const area of arealArray) {
                   const AlertObj = new Alert(alert, info);
                   logger.info(
@@ -44,9 +58,11 @@ const updateEventData = async () => {
                       AlertObj.location_code +
                       ' with type ' +
                       AlertObj.type +
-                      ' sending to queue',
+                      ' adding to queue',
                   );
-                  await alertQueue.add(AlertObj);
+                  await alertQueue.add(AlertObj).catch((error) => {
+                    logger.error('Error adding alerts job to queue: ' + error);
+                  });
                 }
               }
             } else {

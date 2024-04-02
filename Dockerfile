@@ -1,5 +1,7 @@
 FROM node:16-alpine
 
+ENV TZ Europe/Rome
+
 WORKDIR /app
 
 COPY package.json yarn.lock ./
