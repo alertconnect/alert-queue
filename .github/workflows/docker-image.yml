@@ -9,9 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -29,10 +26,12 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
+      - name: Debug - List files
+        run: ls -R .
+
       - name: Build and push the image
         uses: docker/build-push-action@v5
         with:
           push: true
-          context: .
           platforms: linux/amd64
           tags: registry.gitlab.com/alertconnect/alert-queue:${{ steps.get_version.outputs.VERSION }}

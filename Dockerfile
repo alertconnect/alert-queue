@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20.14.0-slim
 
 ENV TZ Europe/Rome
 
