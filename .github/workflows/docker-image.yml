@@ -32,11 +32,8 @@ jobs:
       - name: Debug - List files
         run: ls -R .
 
-      - name: Build and push the image
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          context: ./
-          file: ./Dockerfile
-          platforms: linux/amd64
-          tags: registry.gitlab.com/alertconnect/alert-queue:${{ steps.get_version.outputs.VERSION }}
+      - name: Build the image
+        run: docker build -t registry.gitlab.com/alertconnect/alert-queue:${{ steps.get_version.outputs.VERSION }} .
+
+      - name: Push the image
+        run: docker push registry.gitlab.com/alertconnect/alert-queue:${{ steps.get_version.outputs.VERSION }}
