@@ -41,28 +41,39 @@ const updateEventData = async () => {
             const infoAlert = result.alert.info;
             if (infoAlert) {
               for (const info of infoAlert) {
-                const arealArray = info.area;
-                const sector = new Sector(info);
-                logger.info(
-                  'New incoming sector with code ' +
-                    sector.code +
-                    ', adding to queue',
-                );
-                await sectorsQueue.add(sector).catch((error) => {
-                  logger.error('Error adding sector job to queue: ' + error);
-                });
-                for (const area of arealArray) {
-                  const AlertObj = new Alert(alert, info);
+                const locationArray = info.area;
+                for (const location of locationArray) {
+                  /**
+                   *  Create a new sector object and add it to the queue
+                   */
+
+                  const sector = new Sector(location);
                   logger.info(
-                    'New alert found on location ' +
-                      AlertObj.location_code +
-                      ' with type ' +
-                      AlertObj.type +
-                      ' adding to queue',
+                    `New incoming sector with code ${sector.code}, adding to queue`,
                   );
-                  await alertQueue.add(AlertObj).catch((error) => {
-                    logger.error('Error adding alerts job to queue: ' + error);
-                  });
+                  if (config.env !== 'development') {
+                    await sectorsQueue.add(sector).catch((error) => {
+                      logger.error(
+                        `Error adding sector job to queue: ${error}`,
+                      );
+                    });
+                  }
+
+                  /**
+                   *  Create a new alert object and add it to the queue
+                   */
+
+                  const AlertObj = new Alert(alert, info, sector);
+                  logger.info(
+                    `New alert found on location ${AlertObj.location_code} with type ${AlertObj.type}, adding to queue`,
+                  );
+                  if (config.env !== 'development') {
+                    await alertQueue.add(AlertObj).catch((error) => {
+                      logger.error(
+                        `Error adding sector job to queue: ${error}`,
+                      );
+                    });
+                  }
                 }
               }
             } else {

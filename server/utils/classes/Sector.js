@@ -1,11 +1,11 @@
 class Sector {
   /**
    * @description - Sector class
-   * @param {Object} info - Info object
+   * @param {Object} location - Info object
    */
-  constructor(info) {
-    this.code = info.area[0].geocode[0].value.toString();
-    this.description = info.area[0].areaDesc.toString() || '';
+  constructor(location) {
+    this.code = location.geocode[0].value.toString();
+    this.description = location.areaDesc.toString() || '';
   }
 }
 
